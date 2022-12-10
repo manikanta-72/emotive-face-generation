@@ -2,8 +2,8 @@ import os
 import cv2
 
 print("Python Program to print list the files in a directory.")
-rootdir = 'old_images'
-newrootdir = 'new_images'
+rootdir = '/home/mani/git/emotive-face-generation/data/affectNet_data'
+newrootdir = '/home/mani/git/emotive-face-generation/data/affectNet_data_processed'
 
 
 dirs = ["anger", "contempt", "disgust", "fear", "happy", "neutral", "sad", "surprise"]
