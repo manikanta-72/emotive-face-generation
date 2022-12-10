@@ -1,8 +1,8 @@
 import argparse
 import os
 import torch
+# import cPickle as pkl
 import pickle as pkl
-
 
 def create_sub_dirs(opt, sub_dirs):
     for sub_dir in sub_dirs:
@@ -44,6 +44,7 @@ class TrainOptions(object):
 
         # training
         self.parser.add_argument('--batchSize', type=int, default=32, help='input batch size')
+        self.parser.add_argument('--imgSize', type=int, default=64, help='input image size (square image imgSize x imgSize)')
         self.parser.add_argument('--continue_train', action='store_true', help='continue training: load the latest model')
         self.parser.add_argument('--which_epoch', type=str, default='latest', help='which epoch to load? set to latest to use latest cached model')
         self.parser.add_argument('--epoch_count', type=int, default=1,
@@ -96,8 +97,8 @@ class TrainOptions(object):
                 self.opt.gpu_ids.append(id)
 
         # Set gpu ids
-        if len(self.opt.gpu_ids) > 0:
-            torch.cuda.set_device(self.opt.gpu_ids[0])
+        #if len(self.opt.gpu_ids) > 0:
+        #    torch.cuda.set_device(self.opt.gpu_ids[0])
 
         # save to the disk
         expr_dir = os.path.join(self.opt.checkpoints_dir, self.opt.name)
@@ -137,6 +138,20 @@ class TestOptions(object):
         self.parser.add_argument('--res_dir', type=str, default='test_res', help='results directory (will create under expr_dir)')
         self.parser.add_argument('--train_logvar', type=int, default=1, help='train logvar_B on training data')
         self.parser.add_argument('--dataroot', required=True, type=str, help='path to images')
+        self.parser.add_argument('--metric', required=True, type=str, choices=['bpp', 'mse', 'visual', 'noise_sens'])
+
+    def parse(self):
+        return self.parser.parse_args()
+
+
+class InferOptions(object):
+    def __init__(self):
+        self.parser = argparse.ArgumentParser()
+        self.parser.add_argument('--chk_path', required=True, type=str, help='path to checkpoint -- we assume expr_dir is containing dir')
+        self.parser.add_argument('--res_dir', type=str, default='test_res', help='results directory (will create under expr_dir)')
+        self.parser.add_argument('--train_logvar', type=int, default=1, help='train logvar_B on training data')
+        self.parser.add_argument('--datarootA', required=True, type=str, help='path to images A')
+        self.parser.add_argument('--datarootB', required=True, type=str, help='path to images B')
         self.parser.add_argument('--metric', required=True, type=str, choices=['bpp', 'mse', 'visual', 'noise_sens'])
 
     def parse(self):
